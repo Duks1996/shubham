@@ -1,6 +1,6 @@
 package com.apiexample.payload;
 
-import jakarta.validation.constraints.*;
+import javax.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
