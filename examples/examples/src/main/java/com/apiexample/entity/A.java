@@ -2,7 +2,7 @@ package com.apiexample.entity;
 
 public class A {
     public static void main(String[] args) {
-        System.out.println("hello world! from A 983");
-        System.out.println("master branch");
+        System.out.println("hello world!");
+        System.out.println("master branch from 984");
     }
 }
