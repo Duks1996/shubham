@@ -22,5 +22,4 @@ public class Registration {
 
     @Column(name = "mobile", length = 10)
     private String mobile;
-
 }
