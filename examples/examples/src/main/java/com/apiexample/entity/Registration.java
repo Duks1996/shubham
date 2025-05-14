@@ -22,4 +22,6 @@ public class Registration {
 
     @Column(name = "mobile", length = 10)
     private String mobile;
+
+    //postmen documentation link https://documenter.getpostman.com/view/44593994/2sB2qUnQ5N
 }
