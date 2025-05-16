@@ -3,7 +3,7 @@ package com.apiexample.controller;
 import com.apiexample.payload.RegDto;
 import com.apiexample.payload.RegistrationDto;
 import com.apiexample.service.RegistrationService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
