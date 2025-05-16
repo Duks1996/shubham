@@ -1,6 +1,7 @@
 package com.airbnb.controller;
 
 import com.airbnb.payload.AppUserDto;
+import com.airbnb.payload.JWTToken;
 import com.airbnb.payload.LoginDto;
 import com.airbnb.service.AuthSercive;
 import org.springframework.http.HttpStatus;
@@ -30,11 +31,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> signIn(@RequestBody LoginDto loginDto){
-        if(as.verifyLogin(loginDto)){
-            return new ResponseEntity<>("Successful",HttpStatus.OK);
+    public ResponseEntity<?> signIn(@RequestBody LoginDto loginDto){
+        if(as.verifyLogin(loginDto)!=null){
+            JWTToken jwtToken = new JWTToken();
+            jwtToken.setTokenType("JWT");
+            jwtToken.setToken(as.verifyLogin(loginDto));
+            return new ResponseEntity<>(jwtToken,HttpStatus.OK);
         }else {
             return new ResponseEntity<>("Invalid Username/Password",HttpStatus.UNAUTHORIZED);
         }
     }
+
 }

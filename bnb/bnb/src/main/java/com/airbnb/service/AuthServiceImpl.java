@@ -13,8 +13,10 @@ import java.util.Optional;
 @Service
 public class AuthServiceImpl implements AuthSercive{
     private AppUserRepository aur;
-    public AuthServiceImpl(AppUserRepository aur) {
+    private JWTService jwtService;
+    public AuthServiceImpl(AppUserRepository aur, JWTService jwtService) {
         this.aur = aur;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -36,13 +38,15 @@ public class AuthServiceImpl implements AuthSercive{
     }
 
     @Override
-    public boolean verifyLogin(LoginDto loginDto) {
+    public String verifyLogin(LoginDto loginDto) {
         Optional<AppUser> opUsername = aur.findByEmailOrUsername(loginDto.getUsername(),loginDto.getUsername());
         if (opUsername.isPresent()) {
             AppUser appUser = opUsername.get();
-            return BCrypt.checkpw(loginDto.getPassword(), appUser.getPassword());
+            if(BCrypt.checkpw(loginDto.getPassword(), appUser.getPassword())){
+                return jwtService.generateToken(appUser);
+            }
         }
-        return false;
+        return null;
     }
 
     private AppUserDto mapToDto(AppUser appUser) {
