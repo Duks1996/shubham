@@ -57,6 +57,7 @@ public class AuthServiceImpl implements AuthSercive{
         dto.setUsername(appUser.getUsername());
         dto.setPassword(appUser.getPassword());
         dto.setMessage("Saved AppUser");
+        dto.setRole(appUser.getRole());
         return dto;
     }
 
@@ -66,6 +67,7 @@ public class AuthServiceImpl implements AuthSercive{
         appUser.setEmail(dto.getEmail());
         appUser.setUsername(dto.getUsername());
         appUser.setPassword(BCrypt.hashpw(dto.getPassword(),BCrypt.gensalt(10)));
+        appUser.setRole(dto.getRole());
         return appUser;
     }
 }

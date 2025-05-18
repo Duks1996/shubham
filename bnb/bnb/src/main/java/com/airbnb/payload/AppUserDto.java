@@ -26,6 +26,9 @@ public class AppUserDto {
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
+    @Size(max = 255, message = "role must be less than 255 characters")
+    private String role;
+
     @Size(max = 255, message = "Message must be less than 255 characters")
     private String message;
 

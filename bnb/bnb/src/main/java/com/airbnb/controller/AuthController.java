@@ -20,11 +20,34 @@ public class AuthController {
     }
     //http://localhost:8080/api/v1/auth
 
-    @PostMapping
-    public ResponseEntity<?> addAppUser(@RequestBody @Valid AppUserDto appUserDto, BindingResult res){
+    @PostMapping("/createappuser")
+    public ResponseEntity<?> createAppUser(@RequestBody @Valid AppUserDto appUserDto, BindingResult res){
         if(res.hasErrors()){
             return new ResponseEntity<>(res.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
         }else{
+            appUserDto.setRole("ROLE_USER");
+            AppUserDto savedAppUser = as.addAppUser(appUserDto);
+            return new ResponseEntity<>(savedAppUser, HttpStatus.CREATED);
+        }
+    }
+
+    @PostMapping("/createpropertyowner")
+    public ResponseEntity<?> createPropertyOwner(@RequestBody @Valid AppUserDto appUserDto, BindingResult res){
+        if(res.hasErrors()){
+            return new ResponseEntity<>(res.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+        }else{
+            appUserDto.setRole("ROLE_OWNER");
+            AppUserDto savedAppUser = as.addAppUser(appUserDto);
+            return new ResponseEntity<>(savedAppUser, HttpStatus.CREATED);
+        }
+    }
+
+    @PostMapping("/createpropertymanager")
+    public ResponseEntity<?> createPropertyManager(@RequestBody @Valid AppUserDto appUserDto, BindingResult res){
+        if(res.hasErrors()){
+            return new ResponseEntity<>(res.getFieldError().getDefaultMessage(), HttpStatus.BAD_REQUEST);
+        }else{
+            appUserDto.setRole("ROLE_MANAGER");
             AppUserDto savedAppUser = as.addAppUser(appUserDto);
             return new ResponseEntity<>(savedAppUser, HttpStatus.CREATED);
         }

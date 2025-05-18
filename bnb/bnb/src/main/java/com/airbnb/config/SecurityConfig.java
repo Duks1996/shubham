@@ -22,8 +22,10 @@ public class SecurityConfig {
         //http.authorizeHttpRequests().anyRequest().permitAll();
         http.addFilterBefore(jwtFilter, AuthorizationFilter.class);
         http.authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**")
+                .requestMatchers("/api/v1/auth/login","/api/v1/auth/createappuser","/api/v1/auth/createpropertyowner")
                 .permitAll()
+                .requestMatchers("/api/v1/auth/createpropertymanager")
+                .hasRole("ADMIN")
                 .anyRequest()
                 .authenticated();
         return http.build();
