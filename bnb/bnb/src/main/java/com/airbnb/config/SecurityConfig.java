@@ -25,7 +25,7 @@ public class SecurityConfig {
 //        http.authorizeHttpRequests()
 //                .requestMatchers("/api/v1/auth/login","/api/v1/auth/createappuser","/api/v1/auth/createpropertyowner")
 //                .permitAll()
-//                .requestMatchers("/api/v1/auth/createpropertymanager")
+//                .requestMatchers("/api/v1/auth/createpropertymanager","/api/v1/countrycity/**")
 //                .hasRole("ADMIN")
 //                .anyRequest()
 //                .authenticated();
