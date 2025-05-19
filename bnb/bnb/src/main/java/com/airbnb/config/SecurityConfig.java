@@ -18,16 +18,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         //h(cd)2
         http.csrf().disable().cors().disable();
-        //haap
-        //http.authorizeHttpRequests().anyRequest().permitAll();
+
         http.addFilterBefore(jwtFilter, AuthorizationFilter.class);
-        http.authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/login","/api/v1/auth/createappuser","/api/v1/auth/createpropertyowner")
-                .permitAll()
-                .requestMatchers("/api/v1/auth/createpropertymanager")
-                .hasRole("ADMIN")
-                .anyRequest()
-                .authenticated();
+        //haap
+        http.authorizeHttpRequests().anyRequest().permitAll();
+//        http.authorizeHttpRequests()
+//                .requestMatchers("/api/v1/auth/login","/api/v1/auth/createappuser","/api/v1/auth/createpropertyowner")
+//                .permitAll()
+//                .requestMatchers("/api/v1/auth/createpropertymanager")
+//                .hasRole("ADMIN")
+//                .anyRequest()
+//                .authenticated();
         return http.build();
     }
 }
