@@ -3,10 +3,12 @@ package com.airbnb.service;
 import com.airbnb.entity.AppUser;
 import com.airbnb.entity.Property;
 import com.airbnb.entity.Review;
+import com.airbnb.payload.ApiResponse;
 import com.airbnb.repository.PropertyRepository;
 import com.airbnb.repository.ReviewRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,14 +21,20 @@ public class ReviewService {
         this.propertyRepository = propertyRepository;
     }
 
-    public Review createReview(Review review, AppUser appUser, Long id){
+    public ApiResponse createReview(Review review, AppUser appUser, Long id){
         Optional<Property> byId = propertyRepository.findById(id);
-        if (byId.isPresent()){
-            review.setAppUser(appUser);
-            review.setProperty(byId.get());
-            return reviewRepository.save(review);
-        }else {
-            return null;
-        }
+        if (byId.isEmpty()) return new ApiResponse(false, null, "Property does not exists with id " + id);
+
+        Property property = byId.get();
+        Review existingReview = reviewRepository.findByAppUserAndProperty(appUser, property);
+        if (existingReview!=null) return new ApiResponse(false, null, "Review already exists for this property and user");
+
+        review.setAppUser(appUser);
+        review.setProperty(property);
+        return new ApiResponse(true,reviewRepository.save(review),"Review created successfully");
+    }
+
+    public List<Review> listReviewOfUser(AppUser appUser){
+        return reviewRepository.findByAppUser(appUser);
     }
 }
