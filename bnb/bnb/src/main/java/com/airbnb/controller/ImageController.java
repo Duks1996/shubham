@@ -2,6 +2,7 @@ package com.airbnb.controller;
 
 import com.airbnb.entity.AppUser;
 import com.airbnb.entity.Image;
+import com.airbnb.payload.ImageDto;
 import com.airbnb.service.ImageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/image")
@@ -33,6 +36,18 @@ public class ImageController {
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>("Upload failed: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/imagesbypropertyid")
+    public ResponseEntity<?> viewImagesByPropertyId(@RequestParam long propertyId,@AuthenticationPrincipal AppUser appUser){
+        try {
+            ImageDto imageDto = imageService.viewImagesByPropertyId(propertyId);
+            return new ResponseEntity<>(imageDto,HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>("Retrival failed: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }catch (IOException e) {
             return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

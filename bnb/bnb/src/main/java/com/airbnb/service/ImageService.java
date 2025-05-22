@@ -2,6 +2,7 @@ package com.airbnb.service;
 
 import com.airbnb.entity.Image;
 import com.airbnb.entity.Property;
+import com.airbnb.payload.ImageDto;
 import com.airbnb.repository.ImageRepository;
 import com.airbnb.repository.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +38,13 @@ public class ImageService {
         image.setUrl(fileUrl);
         image.setProperty(optionalProperty.get());
         return imageRepository.save(image);
+    }
+
+    public ImageDto viewImagesByPropertyId(long propertyId) throws IOException{
+        Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
+        if (optionalProperty.isEmpty()) {
+            throw new IllegalArgumentException("Property with ID " + propertyId + " not found.");
+        }
+        return new ImageDto(optionalProperty.get(),imageRepository.findByPropertyId(propertyId));
     }
 }
