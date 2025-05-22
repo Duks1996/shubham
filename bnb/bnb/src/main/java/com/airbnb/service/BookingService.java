@@ -25,29 +25,34 @@ public class BookingService {
         this.bookingRepository = bookingRepository;
     }
 
-    public String createBooking(long propertyId, Booking booking, AppUser appUser) {
+    public Booking createBooking(long propertyId, Booking booking, AppUser appUser) {
         List<LocalDate> datesBetween = getDatesBetween(booking.getCheckInDate(), booking.getCheckOutDate());
-
-        Room room = roomRepository.findByTypeAndPropertyId(booking.getTypeOfRoom(), propertyId);
         Property property = propertyRepository.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found"));
+        List<Room> rooms = new ArrayList<>();
+        for (LocalDate date : datesBetween){
+            Room room = roomRepository.findByTypeAndPropertyIdAndDate(booking.getTypeOfRoom(), propertyId, date);
+            if(room.getCount()==0){
+                rooms.clear();
+                return null;
+            }
+            rooms.add(room);
+        }
 
-        if(room.getCount()==0){
-            return "Rooms not available";
-        }else{
-            float nightlyPrice = room.getPrice();
-            float totalPrice = nightlyPrice * booking.getTotalNights();
-//
-            booking.setTotalPrice(totalPrice);
-            booking.setProperty(property);
-            booking.setAppUser(appUser);
-
-            Booking savedBooking = bookingRepository.save(booking);
-            if(savedBooking!=null){
-                room.setCount(room.getCount()-1);
+        float total=0;
+        for (Room room:rooms){
+            total+=room.getPrice();
+        }
+        booking.setTotalPrice(total);
+        booking.setProperty(property);
+        booking.setAppUser(appUser);
+        Booking savedBooking = bookingRepository.save(booking);
+        if (savedBooking!=null) {
+            for (Room room : rooms) {
+                room.setCount(room.getCount() - 1);
                 roomRepository.save(room);
             }
-            return "Room Booked";
         }
+        return savedBooking;
     }
 
     public List<LocalDate> getDatesBetween(LocalDate checkInDate,LocalDate checkOutDate) {

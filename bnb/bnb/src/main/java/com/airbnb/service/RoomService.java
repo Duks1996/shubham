@@ -30,11 +30,6 @@ public class RoomService {
         return deleted > 0 ? "Room deleted" : "Room not found";
     }
 
-    public Room viewRoom(String roomType,long propertyId) {
-        propertyRepository.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found"));
-        return roomRepository.findByTypeAndPropertyId(roomType,propertyId);
-    }
-
     public Room updateRoom(long propertyId,long roomId, Room updatedRoom) {
         propertyRepository.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found"));
         Room existingRoom = roomRepository.findById(roomId).orElseThrow(() -> new RuntimeException("Room not found"));

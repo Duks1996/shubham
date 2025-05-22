@@ -17,11 +17,12 @@ public class BookingController {
     }
 
     @PostMapping("/createbooking")
-    public ResponseEntity<String> createBooking(
+    public ResponseEntity<?> createBooking(
             @RequestParam long propertyId,
             @RequestBody Booking booking,
             @AuthenticationPrincipal AppUser appUser
             ){
-        return new ResponseEntity<>(bookingService.createBooking(propertyId,booking,appUser), HttpStatus.OK);
+        Booking responsebooking = bookingService.createBooking(propertyId, booking, appUser);
+        return responsebooking!=null ? new ResponseEntity<>(responsebooking, HttpStatus.CREATED) : new ResponseEntity<>("Failed to book", HttpStatus.BAD_REQUEST);
     }
 }

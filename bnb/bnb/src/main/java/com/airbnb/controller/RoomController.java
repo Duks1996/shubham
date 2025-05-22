@@ -29,12 +29,6 @@ public class RoomController {
         return new ResponseEntity<>(roomService.deleteRoom(roomId,propertyId), HttpStatus.OK);
     }
 
-    @GetMapping("/viewroom")
-    public ResponseEntity<?> viewRoom(@RequestParam String roomType, @RequestParam long propertyId) {
-        Room room = roomService.viewRoom(roomType, propertyId);
-        return room != null ? new ResponseEntity<>(roomService.viewRoom(roomType,propertyId),HttpStatus.OK) : new ResponseEntity<>("Room not found",HttpStatus.OK);
-    }
-
     @PutMapping("/updateroom")
     public ResponseEntity<Room> updateRoom(@RequestParam long propertyId, @RequestParam long roomId, @RequestBody Room updatedRoom, @AuthenticationPrincipal AppUser appUser) {
         return new ResponseEntity<>(roomService.updateRoom(propertyId, roomId, updatedRoom), HttpStatus.OK);
