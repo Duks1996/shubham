@@ -21,9 +21,9 @@ public class ReviewService {
         this.propertyRepository = propertyRepository;
     }
 
-    public ApiResponse createReview(Review review, AppUser appUser, Long id){
-        Optional<Property> byId = propertyRepository.findById(id);
-        if (byId.isEmpty()) return new ApiResponse(false, null, "Property does not exists with id " + id);
+    public ApiResponse createReview(Review review, AppUser appUser, Long propertyid){
+        Optional<Property> byId = propertyRepository.findById(propertyid);
+        if (byId.isEmpty()) return new ApiResponse(false, null, "Property does not exists with id " + propertyid);
 
         Property property = byId.get();
         Review existingReview = reviewRepository.findByAppUserAndProperty(appUser, property);
@@ -36,5 +36,20 @@ public class ReviewService {
 
     public List<Review> listReviewOfUser(AppUser appUser){
         return reviewRepository.findByAppUser(appUser);
+    }
+
+    public int deleteReview(AppUser appUser, Long propertyid) {
+        Optional<Property> byId = propertyRepository.findById(propertyid);
+        if (byId.isEmpty()) return 3;
+        Property property = byId.get();
+
+        Review existingReview = reviewRepository.findByAppUserAndProperty(appUser, property);
+
+        if (existingReview==null) {
+            return 1;
+        }else {
+            reviewRepository.deleteById(existingReview.getId());
+            return 2;
+        }
     }
 }

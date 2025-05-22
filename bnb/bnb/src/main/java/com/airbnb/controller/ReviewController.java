@@ -24,9 +24,9 @@ public class ReviewController {
     public ResponseEntity<?> createReview(
             @RequestBody Review review,
             @AuthenticationPrincipal AppUser appUser,
-            @RequestParam Long id
+            @RequestParam Long propertyid
             ){
-        ApiResponse response = reviewService.createReview(review, appUser, id);
+        ApiResponse response = reviewService.createReview(review, appUser, propertyid);
         if(response.getSuccess()){
             return new ResponseEntity<>(response.getReview(),HttpStatus.CREATED);
         }else {
@@ -37,5 +37,15 @@ public class ReviewController {
     @GetMapping("/userreviews")
     public ResponseEntity<List<Review>> listReviewOfUser(@AuthenticationPrincipal AppUser appUser){
         return new ResponseEntity<>(reviewService.listReviewOfUser(appUser),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deletereview")
+    public ResponseEntity<String> deleteReview(@RequestParam Long propertyid, @AuthenticationPrincipal AppUser appUser){
+        switch (reviewService.deleteReview(appUser,propertyid)){
+            case 1 : return new ResponseEntity<>("Review does not exists for this property and user", HttpStatus.BAD_REQUEST);
+            case 2 : return new ResponseEntity<>("Successfully deleted the review for "+propertyid+" property and "+appUser.getId()+" user", HttpStatus.OK);
+            case 3 : return new ResponseEntity<>("Property "+propertyid+" does not exists", HttpStatus.BAD_REQUEST);
+            default: return new ResponseEntity<>("Unexpected error ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
