@@ -18,11 +18,13 @@ public class BookingService {
     RoomRepository roomRepository;
     PropertyRepository propertyRepository;
     BookingRepository bookingRepository;
+    PDFService pdfService;
 
-    public BookingService(PropertyRepository propertyRepository,RoomRepository roomRepository,BookingRepository bookingRepository) {
+    public BookingService(PropertyRepository propertyRepository,RoomRepository roomRepository,BookingRepository bookingRepository,PDFService pdfService) {
         this.propertyRepository = propertyRepository;
         this.roomRepository = roomRepository;
         this.bookingRepository = bookingRepository;
+        this.pdfService = pdfService;
     }
 
     public Booking createBooking(long propertyId, Booking booking, AppUser appUser) {
@@ -37,7 +39,7 @@ public class BookingService {
             }
             rooms.add(room);
         }
-
+        //price calculation
         float total=0;
         for (Room room:rooms){
             total+=room.getPrice();
@@ -52,6 +54,8 @@ public class BookingService {
                 roomRepository.save(room);
             }
         }
+        //generating pdf
+        pdfService.generateBookingPDFAndSendingEmail(savedBooking);
         return savedBooking;
     }
 
