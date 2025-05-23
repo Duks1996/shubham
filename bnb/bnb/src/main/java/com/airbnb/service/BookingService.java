@@ -13,23 +13,34 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class BookingService {
-    RoomRepository roomRepository;
-    PropertyRepository propertyRepository;
-    BookingRepository bookingRepository;
-    PDFService pdfService;
+    private static final Logger logger = LoggerFactory.getLogger(BookingService.class);
 
-    public BookingService(PropertyRepository propertyRepository,RoomRepository roomRepository,BookingRepository bookingRepository,PDFService pdfService) {
+    private RoomRepository roomRepository;
+    private PropertyRepository propertyRepository;
+    private BookingRepository bookingRepository;
+    private PDFService pdfService;
+    private SmsService smsService;
+    private WhatsAppService whatsAppService;
+
+    public BookingService(PropertyRepository propertyRepository,RoomRepository roomRepository,BookingRepository bookingRepository,PDFService pdfService,SmsService smsService,WhatsAppService whatsAppService) {
         this.propertyRepository = propertyRepository;
         this.roomRepository = roomRepository;
         this.bookingRepository = bookingRepository;
         this.pdfService = pdfService;
+        this.smsService = smsService;
+        this.whatsAppService = whatsAppService;
     }
 
     public Booking createBooking(long propertyId, Booking booking, AppUser appUser) {
+
         List<LocalDate> datesBetween = getDatesBetween(booking.getCheckInDate(), booking.getCheckOutDate());
         Property property = propertyRepository.findById(propertyId).orElseThrow(() -> new RuntimeException("Property not found"));
+
         List<Room> rooms = new ArrayList<>();
         for (LocalDate date : datesBetween){
             Room room = roomRepository.findByTypeAndPropertyIdAndDate(booking.getTypeOfRoom(), propertyId, date);
@@ -54,8 +65,12 @@ public class BookingService {
                 roomRepository.save(room);
             }
         }
-        //generating pdf
+        //generating pdf and sending email
         pdfService.generateBookingPDFAndSendingEmail(savedBooking);
+        //sending sms
+        smsService.sendSms(savedBooking.getMobile(),savedBooking.getProperty().getName()+" Booking Confirmation "+savedBooking.getId());
+        //sending sms to whatsapp
+        whatsAppService.sendWhatsAppMessage(savedBooking.getMobile(),savedBooking.getProperty().getName()+" Booking Confirmation "+savedBooking.getId());
         return savedBooking;
     }
 
