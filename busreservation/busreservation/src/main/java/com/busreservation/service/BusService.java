@@ -46,7 +46,7 @@ public class BusService {
         //Get all seats and exclude the occupied ones
         return seatRepository.findAllByBusId(busId).stream()
                 .filter(seat -> !occupiedSeatIds.contains(seat.getId()))
-                .map(seat -> new AvailableSeatDTO(seat.getId(), seat.getName()))
+                .map(seat -> new AvailableSeatDTO(seat.getId(), seat.getName(),seat.getBus()))
                 .collect(Collectors.toList());
     }
 }
